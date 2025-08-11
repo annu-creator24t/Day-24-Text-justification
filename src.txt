@@ -1,0 +1,73 @@
+import java.util.ArrayList;
+import java.util.List;
+
+class Solution {
+    public List<String> fullJustify(String[] words, int maxWidth) {
+        List<String> result = new ArrayList<>();
+        if (words == null || words.length == 0) return result;
+
+        List<String> currline = new ArrayList<>();
+        currline.add(words[0]);
+        int currlen = words[0].length();
+
+        for (int i = 1; i < words.length; i++) {
+            if (currlen + words[i].length() + currline.size() <= maxWidth) {
+                currline.add(words[i]);
+                currlen += words[i].length();
+            } else {
+                if (currline.size() == 1) {
+                    processLineWithOneWord(currline, currlen, maxWidth, result);
+                } else {
+                    processLineWithKWords(currline, currlen, maxWidth, result);
+                }
+                currline = new ArrayList<>();
+                currline.add(words[i]);
+                currlen = words[i].length();
+            }
+        }
+
+        processLastLine(currline, currlen, maxWidth, result);
+        return result;
+    }
+
+    private void processLineWithOneWord(List<String> currline, int currlen, int maxWidth, List<String> result) {
+        int spacesb = maxWidth - currlen;
+        String resStr = currline.get(0);
+        while (spacesb > 0) {
+            resStr += " ";
+            spacesb--;
+        }
+        result.add(resStr);
+    }
+
+    private void processLineWithKWords(List<String> currline, int currlen, int maxWidth, List<String> result) {
+        int spacesb = maxWidth - currlen;
+        int gaps = currline.size() - 1;
+        int spaceBetweenWords = spacesb / gaps;
+        int extraSpaces = spacesb % gaps;
+
+        String resStr = "";
+        for (int i = 0; i < currline.size(); i++) {
+            resStr += currline.get(i);
+            if (i < currline.size() - 1) {
+                for (int j = 0; j < spaceBetweenWords; j++) resStr += " ";
+                if (extraSpaces > 0) {
+                    resStr += " ";
+                    extraSpaces--;
+                }
+            }
+        }
+        result.add(resStr);
+    }
+
+    private void processLastLine(List<String> currline, int currlen, int maxWidth, List<String> result) {
+        int spacesb = maxWidth - currlen;
+        String resStr = "";
+        for (int i = 0; i < currline.size(); i++) {
+            resStr += currline.get(i);
+            if (i < currline.size() - 1) resStr += " ";
+        }
+        while (resStr.length() < maxWidth) resStr += " ";
+        result.add(resStr);
+    }
+}
